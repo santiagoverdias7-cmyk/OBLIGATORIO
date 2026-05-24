@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Administrador - MalaPata</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Administrador</h2>
+      
+      <div id="mensajeBox" class="message-box"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="nombreUsuario">Nombre de Usuario</label>
+          <input 
+            type="text" 
+            id="nombreUsuario" 
+            name="nombreUsuario" 
+            placeholder="Ingresa tu usuario"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Ingresa tu contraseña"
+            required
+          >
+        </div>
+
+        <button type="submit" id="btnIngresar">Ingresar</button>
+      </form>
+
+      <div class="divider"></div>
+
+      <p style="text-align: center; color: var(--color-text-secondary); font-size: 0.9rem;">
+        <a href="/inicio.html">Volver al inicio</a>
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import dispatcher from '/CommandDispatcher.js';
+
+    // Registrar vista
+    const view = dispatcher.registerView('loginAdmin', {
+      onError: (status, texto) => mostrarMensaje(`Error ${status}: ${texto}`, 'error'),
+      onException: (msg) => mostrarMensaje(msg, 'error')
+    });
+
+    // Manejador para comando: loginExitoso
+    view.handler('loginExitoso', (url) => {
+      window.location.href = url;
+    });
+
+    // Manejador para comando: mensaje
+    view.handler('mensaje', (mensajeTexto) => {
+      mostrarMensaje(mensajeTexto, 'error');
+    });
+
+    // Función auxiliar para mostrar mensajes
+    function mostrarMensaje(texto, tipo) {
+      const box = document.getElementById('mensajeBox');
+      box.textContent = texto;
+      box.className = `message-box show ${tipo}`;
+      
+      // Auto-ocultarse después de 5 segundos si es error
+      if (tipo === 'error') {
+        setTimeout(() => {
+          box.classList.remove('show');
+        }, 5000);
+      }
+    }
+
+    // Manejo del formulario
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const nombreUsuario = document.getElementById('nombreUsuario').value;
+      const password = document.getElementById('password').value;
+
+      // Enviar datos al servidor
+      dispatcher.submit('/loginAdmin/login', {
+        nombreUsuario,
+        password
+      });
+    });
+
+    // Iniciar vista (no llama urlInicio, solo configura la vista)
+    dispatcher.startView(view);
+  </script>
+</body>
+</html>

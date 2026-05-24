@@ -1,0 +1,22 @@
+
+
+
+@RestController
+@RequestMapping("/inicio")
+@Scope("session")
+public class PresentadorInicio {
+    
+
+
+
+  @PostMapping("/vistaConectada")
+  public Commands vistaConectada() {
+      return new Commands.create(mostrarInicio());
+
+  }
+private Command mostrarInicio() {
+    return new Command("mostrarInicio", null);
+    
+};
+
+}    

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MalaPata - Apuestas de Caballos</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>🐴 MalaPata</h1>
+      <p class="description">Apuestas de carreras de caballos</p>
+      
+      <div class="divider"></div>
+      
+      <p class="description" style="font-size: 0.95rem; color: var(--color-text-secondary); margin-bottom: 35px;">
+        Bienvenido al sistema de apuestas más emocionante. Ingresa como administrador o jugador para continuar.
+      </p>
+
+      <div class="button-group">
+        <button id="btnAdmin">👨‍💼 Administrador</button>
+        <button id="btnJugador">🎰 Jugador</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Botón Administrador
+    document.getElementById('btnAdmin').addEventListener('click', () => {
+      window.location.href = '/loginAdmin.html';
+    });
+
+    // Botón Jugador
+    document.getElementById('btnJugador').addEventListener('click', () => {
+      window.location.href = '/loginJugador.html';
+    });
+  </script>
+</body>
+</html>

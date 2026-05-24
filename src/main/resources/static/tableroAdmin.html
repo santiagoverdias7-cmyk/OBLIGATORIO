@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablero Admin - MalaPata</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Encabezado -->
+    <div class="dashboard-header">
+      <div class="header-left">
+        <h1>🐴 MalaPata - Tablero Admin</h1>
+        <p id="fechaJornada" class="fecha-jornada">Fecha: -</p>
+      </div>
+      <div class="header-right">
+        <button id="btnCerrarSesion" class="btn-logout">🚪 Cerrar Sesión</button>
+      </div>
+    </div>
+
+    <!-- Mensaje de error/éxito -->
+    <div id="messageBox" class="message-box"></div>
+
+    <!-- Panel de navegación de jornadas -->
+    <div class="panel-navegacion">
+      <button id="btnJornadaAnterior" class="btn-nav">◀ Anterior</button>
+      <button id="btnJornadaSiguiente" class="btn-nav">Siguiente ▶</button>
+    </div>
+
+    <!-- Estadísticas principales -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Apostado</div>
+        <div id="totalApostado" class="stat-value">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Pagado</div>
+        <div id="totalPagado" class="stat-value">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Comisiones</div>
+        <div id="totalComisiones" class="stat-value">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Balance</div>
+        <div id="balance" class="stat-value stat-balance">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Contadores de carreras -->
+    <div class="carreras-count">
+      <div class="count-badge">
+        <span class="count-label">Total Carreras</span>
+        <span id="cantidadCarreras" class="count-value">0</span>
+      </div>
+      <div class="count-badge">
+        <span class="count-label">Finalizadas</span>
+        <span id="cantidadFinalizadas" class="count-value">0</span>
+      </div>
+      <div class="count-badge">
+        <span class="count-label">Por Correr</span>
+        <span id="cantidadPorCorrer" class="count-value">0</span>
+      </div>
+    </div>
+
+    <!-- Sección de carreras finalizadas -->
+    <div class="seccion-carreras">
+      <h2>Carreras Finalizadas</h2>
+      <div id="carrerasFinalizadasContainer">
+        <table id="tablaCarrerasFinalizadas" class="tabla-carreras">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Estado</th>
+              <th>Caballos</th>
+              <th>Total Apostado</th>
+              <th>Total Pagado</th>
+            </tr>
+          </thead>
+          <tbody id="bodyCarrerasFinalizadas">
+            <!-- Se completa dinámicamente -->
+          </tbody>
+        </table>
+        <p id="noCarrerasFinalizadas" class="sin-datos">No hay carreras finalizadas</p>
+      </div>
+    </div>
+
+    <!-- Sección de próximas carreras -->
+    <div class="seccion-carreras">
+      <h2>Próximas Carreras</h2>
+      <div id="proximasCarrerasContainer">
+        <table id="tablaProximasCarreras" class="tabla-carreras">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Caballos</th>
+              <th>Total Apostado</th>
+              <th>Apuestas</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="bodyProximasCarreras">
+            <!-- Se completa dinámicamente -->
+          </tbody>
+        </table>
+        <p id="noProximasCarreras" class="sin-datos">No hay próximas carreras</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import dispatcher from '/CommandDispatcher.js';
+
+    // Registrar la vista
+    const view = dispatcher.registerView('tableroAdmin', {
+      urlInicio: '/tableroAdmin/vistaConectada',
+      onError: (status, texto) => mostrarError(`Error ${status}: ${texto}`),
+      onException: (msg) => mostrarError(msg)
+    });
+
+    // Función auxiliar para mostrar mensajes
+    function mostrarError(mensaje) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = mensaje;
+      messageBox.className = 'message-box show error';
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, 5000);
+    }
+
+    function mostrarExito(mensaje) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = mensaje;
+      messageBox.className = 'message-box show success';
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, 5000);
+    }
+
+    // Función para formatear moneda
+    function formatearMoneda(valor) {
+      return new Intl.NumberFormat('es-UY', {
+        style: 'currency',
+        currency: 'UYU'
+      }).format(valor);
+    }
+
+    // Handler para el comando 'tablero'
+    view.handler('tablero', (jornada) => {
+      // Actualizar fecha
+      document.getElementById('fechaJornada').textContent = `Fecha: ${jornada.fecha}`;
+
+      // Actualizar estadísticas
+      document.getElementById('totalApostado').textContent = formatearMoneda(jornada.totalApostado);
+      document.getElementById('totalPagado').textContent = formatearMoneda(jornada.totalPagado);
+      document.getElementById('totalComisiones').textContent = formatearMoneda(jornada.totalComisiones);
+      
+      const balanceElement = document.getElementById('balance');
+      balanceElement.textContent = formatearMoneda(jornada.balance);
+      balanceElement.className = jornada.balance >= 0 ? 'stat-value stat-balance positive' : 'stat-value stat-balance negative';
+
+      // Actualizar contadores
+      document.getElementById('cantidadCarreras').textContent = jornada.cantidadCarreras;
+      document.getElementById('cantidadFinalizadas').textContent = jornada.cantidadFinalizadas;
+      document.getElementById('cantidadPorCorrer').textContent = jornada.cantidadPorCorrer;
+
+      // Procesar carreras finalizadas
+      const bodyFinalizadas = document.getElementById('bodyCarrerasFinalizadas');
+      bodyFinalizadas.innerHTML = '';
+      
+      if (jornada.carrerasFinalizadas && jornada.carrerasFinalizadas.length > 0) {
+        // Ordenar por número descendente
+        const carrerasOrdenadas = [...jornada.carrerasFinalizadas].sort((a, b) => b.numero - a.numero);
+        carrerasOrdenadas.forEach(carrera => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${carrera.numero}</td>
+            <td>${carrera.estado}</td>
+            <td>${carrera.cantidadCaballos}</td>
+            <td>${formatearMoneda(carrera.totalApostado)}</td>
+            <td>${formatearMoneda(carrera.totalPagado || 0)}</td>
+          `;
+          bodyFinalizadas.appendChild(fila);
+        });
+        document.getElementById('tablaCarrerasFinalizadas').style.display = 'table';
+        document.getElementById('noCarrerasFinalizadas').style.display = 'none';
+      } else {
+        document.getElementById('tablaCarrerasFinalizadas').style.display = 'none';
+        document.getElementById('noCarrerasFinalizadas').style.display = 'block';
+      }
+
+      // Procesar próximas carreras
+      const bodyProximas = document.getElementById('bodyProximasCarreras');
+      bodyProximas.innerHTML = '';
+
+      if (jornada.proximasCarreras && jornada.proximasCarreras.length > 0) {
+        jornada.proximasCarreras.forEach(carrera => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${carrera.numero}</td>
+            <td>${carrera.nombre}</td>
+            <td><span class="estado-badge">${carrera.estado}</span></td>
+            <td>${carrera.cantidadCaballos}</td>
+            <td>${formatearMoneda(carrera.totalApostado)}</td>
+            <td>${carrera.cantidadApuestas}</td>
+            <td><button class="btn-gestionar" data-carrera="${carrera.numero}">Gestionar</button></td>
+          `;
+          bodyProximas.appendChild(fila);
+        });
+        document.getElementById('tablaProximasCarreras').style.display = 'table';
+        document.getElementById('noProximasCarreras').style.display = 'none';
+
+        // Agregar event listeners a los botones Gestionar
+        document.querySelectorAll('.btn-gestionar').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const numeroCarrera = parseInt(e.target.getAttribute('data-carrera'));
+            dispatcher.submit('/tableroAdmin/seleccionarCarrera', { numero: numeroCarrera });
+          });
+        });
+      } else {
+        document.getElementById('tablaProximasCarreras').style.display = 'none';
+        document.getElementById('noProximasCarreras').style.display = 'block';
+      }
+    });
+
+    // Handler para el comando 'mensaje'
+    view.handler('mensaje', (mensaje) => {
+      mostrarError(mensaje);
+    });
+
+    // Evento: Jornada Anterior
+    document.getElementById('btnJornadaAnterior').addEventListener('click', () => {
+      dispatcher.submit('/tableroAdmin/jornadaAnterior');
+    });
+
+    // Evento: Jornada Siguiente
+    document.getElementById('btnJornadaSiguiente').addEventListener('click', () => {
+      dispatcher.submit('/tableroAdmin/jornadaSiguiente');
+    });
+
+    // Evento: Cerrar Sesión
+    document.getElementById('btnCerrarSesion').addEventListener('click', () => {
+      window.location.href = '/loginAdmin.html';
+    });
+
+    // Iniciar la vista
+    dispatcher.startView(view);
+  </script>
+</body>
+</html>
