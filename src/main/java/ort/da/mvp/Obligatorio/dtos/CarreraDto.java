@@ -13,6 +13,7 @@ public class CarreraDto {
     public int cantidadApuestas;
     public int cantidadCaballos;
     public List<ParticipacionDto> participaciones;
+    public String CaballoGanador;
 
     public CarreraDto(Carrera carrera) {
         this.numero = carrera.getNumero();
@@ -22,6 +23,7 @@ public class CarreraDto {
         this.cantidadApuestas = carrera.getCantidadApuestas();
         this.cantidadCaballos = carrera.getParticipaciones().size();
         this.participaciones = ParticipacionDto.listaDtos(carrera.getParticipaciones());
+        this.CaballoGanador = carrera.getNombreGanador();
     }
 
     public static List<CarreraDto> listaDtos(List<Carrera> carreras) {

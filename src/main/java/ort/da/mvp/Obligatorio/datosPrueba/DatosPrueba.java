@@ -6,10 +6,10 @@ import ort.da.mvp.Obligatorio.fachada.Fachada;
 import ort.da.mvp.Obligatorio.modelo.Administrador;
 import ort.da.mvp.Obligatorio.modelo.Caballo;
 import ort.da.mvp.Obligatorio.modelo.Carrera;
-import ort.da.mvp.Obligatorio.modelo.Cerrada;
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 import ort.da.mvp.Obligatorio.modelo.Jugador;
 import ort.da.mvp.Obligatorio.modelo.Participacion;
+import ort.da.mvp.Obligatorio.modelo.estadoCarrera.Cerrada;
 
 public class DatosPrueba {
 

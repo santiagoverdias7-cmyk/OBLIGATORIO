@@ -5,6 +5,7 @@ import ort.da.mvp.Obligatorio.Sistemas.SistemaJornadas;
 import ort.da.mvp.Obligatorio.Sistemas.SistemaUsuarios;
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 import ort.da.mvp.Obligatorio.modelo.Usuario;
+import ort.da.mvp.Obligatorio.modelo.Carrera;
 
 
 
@@ -62,7 +63,22 @@ public Jornada getJornadaSiguiente(Jornada jornada) {
     return sistemaJornadas.getJornadaSiguiente(jornada);
 }
 
+public Carrera buscarCarreraEnJornada(int numero) {
+    return sistemaJornadas.buscarCarreraEnJornadaActual(numero);
+}
 
+
+public void abrirCarrera(Carrera carrera) {
+   sistemaJornadas.abrirCarrera(carrera);
+}
+
+public void cerrarCarrera(Carrera carrera) {
+    sistemaJornadas.cerrarCarrera(carrera);
+}
+
+public void finalizarCarrera(Carrera carrera, int numeroGanador) {
+    sistemaJornadas.finalizarCarrera(carrera, numeroGanador);
+}
 
 
 }

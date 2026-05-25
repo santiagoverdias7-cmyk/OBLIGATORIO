@@ -1,5 +1,7 @@
 package ort.da.mvp.Obligatorio.modelo;
 
+import ort.da.mvp.Obligatorio.modelo.ModalidadAP.ModalidadApuesta;
+
 public class Apuesta {
     
      private double montoApostado;

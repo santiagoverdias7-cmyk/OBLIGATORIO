@@ -217,7 +217,7 @@
         document.querySelectorAll('.btn-gestionar').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const numeroCarrera = parseInt(e.target.getAttribute('data-carrera'));
-            dispatcher.submit('/tableroAdmin/seleccionarCarrera', { numero: numeroCarrera });
+            window.location.href = '/gestionCarrera.html?numero=' + numeroCarrera;
           });
         });
       } else {

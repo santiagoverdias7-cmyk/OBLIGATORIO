@@ -3,6 +3,7 @@ package ort.da.mvp.Obligatorio.Sistemas;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import ort.da.mvp.Obligatorio.modelo.Carrera;
 
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 
@@ -61,6 +62,33 @@ public Jornada getJornadaSiguiente(Jornada jornadaActual) {
 }
 
 
+
+public Carrera buscarCarreraEnJornadaActual(int numero){
+
+    Jornada actual= getJornadaActual();
+    if (actual == null) return null;
+    for (Carrera c : actual.getCarreras()) {
+        if (c.getNumero() == numero) {
+            return c;
+        }
+    }
+    return null;
+}
+
+public void abrirCarrera(Carrera carrera) {
+    carrera.abrir();
+}
+
+public void cerrarCarrera(Carrera carrera) {
+    carrera.cerrar();
+}
+
+//revisar este metodo
+public void finalizarCarrera(Carrera carrera, int numeroGanador) {
+    carrera.setParticipacionGanadora(carrera.buscarParticipacion(numeroGanador));
+    carrera.finalizar();
+   
+}
 
 
 

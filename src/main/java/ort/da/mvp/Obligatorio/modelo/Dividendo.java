@@ -10,7 +10,7 @@ public class Dividendo {
     }
     
  public double getValor() { return valor; }
- public boolean isValido() { return valido; }
+ public boolean EsValido() { return valido; }
 
 
  public void actualizar(double totalApostadoCarrera, double comision, double totalApostadoCaballo) {

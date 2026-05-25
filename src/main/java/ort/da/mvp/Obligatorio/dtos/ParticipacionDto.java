@@ -17,7 +17,7 @@ public class ParticipacionDto {
         this.numero = participacion.getNumero();
         this.nombreCaballo = participacion.getCaballo().getNombre();
         this.dividendo = participacion.getDividendo().getValor();
-        this.dividendoValido = participacion.getDividendo().isValido();
+        this.dividendoValido = participacion.getDividendo().EsValido();
         this.totalApostado = participacion.getTotalApostado();
         this.cantidadApuestas = participacion.getCantidadApuestas();
     }

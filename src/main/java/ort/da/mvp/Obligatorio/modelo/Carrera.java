@@ -3,6 +3,10 @@ package ort.da.mvp.Obligatorio.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import ort.da.mvp.Obligatorio.modelo.estadoCarrera.Definida;
+import ort.da.mvp.Obligatorio.modelo.estadoCarrera.EstadoCarrera;
+import ort.da.mvp.Obligatorio.modelo.estadoCarrera.Finalizada;
+
 public class Carrera {
     private int numero;
     private String nombre;
@@ -67,6 +71,38 @@ public double getTotalPagado() {
         total += p.getTotalPagado();
     }
     return total;
+}
+
+//metodos que delegan al estado
+public void abrir() { estado.abrir(this); }
+public void cerrar() { estado.cerrar(this); }
+public void finalizar() { estado.finalizar(this); }
+public void recalcularEstado() { estado.recalcularEstado(this); }   
+
+public boolean todosDividendosValidos() {
+    for (Participacion p : participaciones) {
+        if (!p.getDividendo().EsValido()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+public Participacion buscarParticipacion(int numero) {
+    for (Participacion p : participaciones) {
+        if (p.getNumero() == numero) {
+            return p;
+        }
+    }
+    return null;    
+}
+
+
+public String getNombreGanador() {
+    if (participacionGanadora != null) {
+        return participacionGanadora.getCaballo().getNombre();
+    }
+    return null;
 }
 
 
