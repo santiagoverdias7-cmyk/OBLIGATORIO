@@ -1,10 +1,10 @@
 package ort.da.mvp.Obligatorio.modelo.ModalidadAP;
 
-public class Triple extends ModalidadApuesta {
+public class ModalidadTriple extends ModalidadApuesta {
     private CalculadorDescuento calculadorDescuento;
     private CalculadorPremio calculadorPremio;
     // Modalidad Triple: costo = monto * 1.5, premio varía según total apostado al caballo
-    public Triple() {
+    public ModalidadTriple() {
         super("Triple");
         this.calculadorDescuento = new DescuentoTriple();
         this.calculadorPremio = new PremioTriple();

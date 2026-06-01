@@ -63,7 +63,7 @@ public Jornada getJornadaSiguiente(Jornada jornadaActual) {
 
 
 
-public Carrera buscarCarreraEnJornadaActual(int numero){
+/*public Carrera buscarCarreraEnJornadaActual(int numero){
 
     Jornada actual= getJornadaActual();
     if (actual == null) return null;
@@ -73,7 +73,21 @@ public Carrera buscarCarreraEnJornadaActual(int numero){
         }
     }
     return null;
+}*/
+
+public Carrera buscarCarreraEnJornada(int numero, LocalDate fecha) {
+    for (Jornada j : jornadas) {
+        if (j.getFecha().equals(fecha)) {
+            return j.buscarCarrera(numero);
+        }
+    }
+    return null;
 }
+
+
+
+
+
 
 public void abrirCarrera(Carrera carrera) {
     carrera.abrir();

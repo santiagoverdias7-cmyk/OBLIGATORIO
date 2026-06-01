@@ -80,6 +80,14 @@ public List<Carrera> getProximasCarreras() {
     return result;
 }
 
+public Carrera buscarCarrera(int numero) {
+    for (Carrera c : carreras) {
+        if (c.getNumero() == numero) {
+            return c;
+        }
+    }
+    return null;
+}
 
 
 }

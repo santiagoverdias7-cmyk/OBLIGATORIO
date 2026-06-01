@@ -1,20 +1,32 @@
 package ort.da.mvp.Obligatorio.fachada;
 
+import java.time.LocalDate;
+
+import org.springframework.stereotype.Component;
+
 import ort.da.mvp.Obligatorio.Sistemas.SistemaApuestas;
 import ort.da.mvp.Obligatorio.Sistemas.SistemaJornadas;
 import ort.da.mvp.Obligatorio.Sistemas.SistemaUsuarios;
+import ort.da.mvp.Obligatorio.modelo.Apuesta;
+import ort.da.mvp.Obligatorio.modelo.Carrera;
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 import ort.da.mvp.Obligatorio.modelo.Usuario;
-import ort.da.mvp.Obligatorio.modelo.Carrera;
+import ort.da.mvp.Obligatorio.observador.Observable;
 
 
 
+@Component
+public class Fachada extends Observable  {
 
-public class Fachada {
+   public enum Eventos {
+        cambioCarreras,
+        cambioApuestas
+    }
+
 
     private static Fachada instancia;
 
-   private SistemaUsuarios sistemaUsuarios;
+    private SistemaUsuarios sistemaUsuarios;
     private SistemaJornadas sistemaJornadas;
     private SistemaApuestas sistemaApuestas;
 
@@ -63,22 +75,34 @@ public Jornada getJornadaSiguiente(Jornada jornada) {
     return sistemaJornadas.getJornadaSiguiente(jornada);
 }
 
-public Carrera buscarCarreraEnJornada(int numero) {
-    return sistemaJornadas.buscarCarreraEnJornadaActual(numero);
+public Carrera buscarCarreraEnJornada(int numero, LocalDate fecha) {
+    return sistemaJornadas.buscarCarreraEnJornada(numero, fecha);
 }
 
-
+//es correcto que sistema jornadas modifique los estados de la carrera?
 public void abrirCarrera(Carrera carrera) {
    sistemaJornadas.abrirCarrera(carrera);
+   avisar(Eventos.cambioCarreras);
 }
 
 public void cerrarCarrera(Carrera carrera) {
     sistemaJornadas.cerrarCarrera(carrera);
+    avisar(Eventos.cambioCarreras);
 }
 
 public void finalizarCarrera(Carrera carrera, int numeroGanador) {
     sistemaJornadas.finalizarCarrera(carrera, numeroGanador);
+    avisar(Eventos.cambioCarreras);
 }
+
+public void registrarApuesta(Apuesta apuesta) {
+    sistemaApuestas.registrarApuesta(apuesta);
+     avisar(Eventos.cambioApuestas);
+}
+
+/*public ModalidadApuesta buscarModalidad(String nombre) {
+    return sistemaApuestas.buscarModalidad(nombre);
+}*/
 
 
 }

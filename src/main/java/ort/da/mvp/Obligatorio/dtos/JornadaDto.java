@@ -1,12 +1,11 @@
 package ort.da.mvp.Obligatorio.dtos;
 
-import java.time.LocalDate;
 import java.util.List;
-import ort.da.mvp.Obligatorio.dtos.CarreraDto;
+
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 
 public class JornadaDto {
-     public LocalDate fecha;
+     public String fecha;
     public double totalApostado;
     public double totalPagado;
     public double totalComisiones;
@@ -19,7 +18,7 @@ public class JornadaDto {
 
 
 public JornadaDto(Jornada jornada){
- this.fecha = jornada.getFecha();
+ this.fecha = jornada.getFecha().toString();
  this.totalApostado = jornada.getTotalApostado();
         this.totalPagado = jornada.getTotalPagado();
         this.totalComisiones = jornada.getTotalComisiones();

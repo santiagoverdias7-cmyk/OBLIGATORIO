@@ -1,13 +1,14 @@
 package ort.da.mvp.Obligatorio.modelo.ModalidadAP;
 
-public class Super extends ModalidadApuesta {
+// Modalidad Simple: sin recargo en el costo, premio = monto * dividendo
+public class ModalidadSimple extends ModalidadApuesta {
     private CalculadorDescuento calculadorDescuento;
     private CalculadorPremio calculadorPremio;
-// la modadalidad super: costo = monto * 2, premio varía según el dividendo del caballo
-    public Super() {
-        super("Super");
-        this.calculadorDescuento = new DescuentoSuper();
-        this.calculadorPremio = new PremioSuper();
+
+    public ModalidadSimple() {
+        super("Simple");
+        this.calculadorDescuento = new DescuentoSimple();
+        this.calculadorPremio = new PremioSimple();
     }
 
     public double calcularCosto(double montoApostado) {
@@ -17,5 +18,4 @@ public class Super extends ModalidadApuesta {
     public double calcularPremio(double montoApostado, double dividendo, double totalApostadoCaballo) {
         return calculadorPremio.calcular(montoApostado, dividendo, totalApostadoCaballo);
     }
-    
 }

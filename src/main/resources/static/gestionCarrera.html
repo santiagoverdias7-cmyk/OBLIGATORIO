@@ -187,13 +187,18 @@
 
     const params = new URLSearchParams(window.location.search);
     const numero = params.get('numero');
+    const fecha = params.get('fecha');
 
     dispatcher.startView(view);
+    dispatcher.connectSSE('/gestionCarrera/registrarSSE');
 
-    if (numero) {
-      dispatcher.submit('/gestionCarrera/seleccionarCarrera', { numero: parseInt(numero, 10) });
+    if (numero && fecha) {
+      dispatcher.submit('/gestionCarrera/seleccionarCarrera', {
+        numero: parseInt(numero, 10),
+        fecha: fecha
+      });
     } else {
-      mostrarError('Número de carrera no especificado en la URL.');
+      mostrarError('Número o fecha de carrera no especificados en la URL.');
     }
   </script>
 </body>

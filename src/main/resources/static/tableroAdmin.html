@@ -217,7 +217,7 @@
         document.querySelectorAll('.btn-gestionar').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const numeroCarrera = parseInt(e.target.getAttribute('data-carrera'));
-            window.location.href = '/gestionCarrera.html?numero=' + numeroCarrera;
+            window.location.href = `/gestionCarrera.html?numero=${numeroCarrera}&fecha=${encodeURIComponent(jornada.fecha)}`;
           });
         });
       } else {
@@ -248,6 +248,7 @@
 
     // Iniciar la vista
     dispatcher.startView(view);
+    dispatcher.connectSSE('/tableroAdmin/registrarSSE');
   </script>
 </body>
 </html>
