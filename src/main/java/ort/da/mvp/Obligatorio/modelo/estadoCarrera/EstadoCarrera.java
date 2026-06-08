@@ -18,4 +18,12 @@ public abstract class EstadoCarrera {
         //solo abierta lo necesita, por defecto no hace nada
     }
 
+    public boolean estaDisponibleParaApostar() {
+    return false;
+}
+
+public boolean esFinalizada() {
+    return false;
+}
+
 }

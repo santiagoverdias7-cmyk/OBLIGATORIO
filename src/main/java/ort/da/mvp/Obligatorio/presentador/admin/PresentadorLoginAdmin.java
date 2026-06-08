@@ -21,22 +21,24 @@ public class PresentadorLoginAdmin {
 
     
 
-   
+     private final Fachada fachada;
+
+    public PresentadorLoginAdmin(Fachada fachada) {
+        this.fachada = fachada;
+    }
+
     @PostMapping("/login")
     public Commands login(HttpSession sesionHttp,
             @RequestParam String nombreUsuario,
             @RequestParam String password) {
-      Usuario usuario = Fachada.getInstancia().loginAdmin(nombreUsuario, password);
+        Usuario usuario = fachada.loginAdmin(nombreUsuario, password);
         
         if (usuario != null) {
             sesionHttp.setAttribute("usuarioLogueado", usuario);
             return Commands.create(new Command("loginExitoso", "tableroAdmin.html"));   
-        } else {
-            return Commands.create(new Command("loginExitoso", "tableroAdmin.html"));   
         }
+        return Commands.create(new Command("mensaje", "Acceso denegado"));
     }
-    
-
 
 
 }

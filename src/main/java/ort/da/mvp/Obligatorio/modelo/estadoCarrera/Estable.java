@@ -7,7 +7,13 @@ public class Estable extends EstadoCarrera {
 
 @Override
 public void cerrar(Carrera carrera) {
+      carrera.guardarDividendosFinales();
     carrera.setEstado(new Cerrada());   
+}
+
+@Override
+public boolean estaDisponibleParaApostar() {
+    return true;
 }
 
 }

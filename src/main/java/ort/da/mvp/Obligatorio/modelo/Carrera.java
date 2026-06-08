@@ -5,7 +5,6 @@ import java.util.List;
 
 import ort.da.mvp.Obligatorio.modelo.estadoCarrera.Definida;
 import ort.da.mvp.Obligatorio.modelo.estadoCarrera.EstadoCarrera;
-import ort.da.mvp.Obligatorio.modelo.estadoCarrera.Finalizada;
 
 public class Carrera {
     private int numero;
@@ -62,7 +61,7 @@ public void setEstado(EstadoCarrera estado) { this.estado = estado; }
     }
 
 public boolean esFinalizada() {
-    return estado instanceof Finalizada;
+    return estado.esFinalizada();
 }
 
 public double getTotalPagado() {
@@ -105,6 +104,48 @@ public String getNombreGanador() {
     return null;
 }
 
+
+//para CU tablero jugador
+public boolean estaDisponibleParaApostar() {
+    return estado.estaDisponibleParaApostar();
+}
+
+
+
+public void registrarApuesta(Apuesta apuesta, double comision) {
+    Participacion p = apuesta.getParticipacion();
+    double costo = apuesta.getModalidad().calcularCosto(apuesta.getMontoApostado());
+    if (!apuesta.getJugador().tieneSaldo(costo)) {
+        throw new RuntimeException("Saldo insuficiente");
+    }
+    apuesta.getJugador().debitar(costo);
+    p.agregarApuesta(apuesta);
+    recalcularDividendos(comision);
+    recalcularEstado();
+}
+
+
+
+
+public void guardarDividendosFinales() {
+    for (Participacion p : participaciones) {
+        p.guardarDividendoFinal();
+    }
+}
+
+
+public void liquidarApuestas() {
+    if (participacionGanadora == null) return;
+    for (Apuesta a : participacionGanadora.getApuestas()) {
+        double premio = a.getModalidad().calcularPremio(
+            a.getMontoApostado(),
+            participacionGanadora.getDividendoFinal(),
+            participacionGanadora.getTotalApostado()
+        );
+        a.setMontoCobrado(premio);
+        a.getJugador().acreditar(premio);
+    }
+}
 
 
 

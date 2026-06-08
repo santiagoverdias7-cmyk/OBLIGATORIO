@@ -26,16 +26,16 @@ public class DatosPrueba {
         fachada.agregarUsuario(new Administrador("a2", "a2", "Administrador Dos"));
 
         // Jugadores
-        Jugador j1 = new Jugador("j1", "j1", "Usuario Jugador", 2000);
-        Jugador j2 = new Jugador("j2", "j2", "Jugador Dos", 5000);
-        Jugador j3 = new Jugador("j3", "j3", "Jugador Tres", 5000);
-        Jugador j4 = new Jugador("j4", "j4", "Jugador Cuatro", 5000);
-        Jugador j5 = new Jugador("j5", "j5", "Jugador Cinco", 5000);
-        Jugador j6 = new Jugador("j6", "j6", "Jugador Seis", 5000);
-        Jugador j7 = new Jugador("j7", "j7", "Jugador Siete", 5000);
-        Jugador j8 = new Jugador("j8", "j8", "Jugador Ocho", 5000);
-        Jugador j9 = new Jugador("j9", "j9", "Jugador Nueve", 5000);
-        Jugador j10 = new Jugador("j10", "j10", "Jugador Diez", 5000);
+        Jugador j1 = new Jugador("j1", "j1", "Usuario Jugador", 20000);
+        Jugador j2 = new Jugador("j2", "j2", "Jugador Dos", 50000);
+        Jugador j3 = new Jugador("j3", "j3", "Jugador Tres", 50000);
+        Jugador j4 = new Jugador("j4", "j4", "Jugador Cuatro", 50000);
+        Jugador j5 = new Jugador("j5", "j5", "Jugador Cinco", 50000);
+        Jugador j6 = new Jugador("j6", "j6", "Jugador Seis", 50000);
+        Jugador j7 = new Jugador("j7", "j7", "Jugador Siete", 50000);
+        Jugador j8 = new Jugador("j8", "j8", "Jugador Ocho", 50000);
+        Jugador j9 = new Jugador("j9", "j9", "Jugador Nueve", 50000);
+        Jugador j10 = new Jugador("j10", "j10", "Jugador Diez", 50000);
         fachada.agregarUsuario(j1);
         fachada.agregarUsuario(j2);
         fachada.agregarUsuario(j3);

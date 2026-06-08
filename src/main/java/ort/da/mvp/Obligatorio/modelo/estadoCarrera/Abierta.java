@@ -12,5 +12,10 @@ public class Abierta extends EstadoCarrera {
      }
  }
 
+ @Override
+public boolean estaDisponibleParaApostar() {
+    return true;
+}
+
 
 }

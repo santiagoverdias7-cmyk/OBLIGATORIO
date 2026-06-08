@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import ort.da.mvp.Obligatorio.dtos.CarreraDisponibleDto;
+
 public class Jornada {
     
     private LocalDate fecha;
@@ -43,9 +45,15 @@ public double getTotalPagado() {
 }
 
 
+/*public double getTotalComisiones(double comision) {
+    return getTotalApostado() * (comision / 100);
+}*/
+
 public double getTotalComisiones() {
     return getTotalApostado() * 0.10;
-}
+} //esto se debera cambiar una vez se cree la clase de comisionHipodromo
+
+
 
 public double getBalance() {
     return getTotalApostado() - getTotalPagado();
@@ -88,6 +96,18 @@ public Carrera buscarCarrera(int numero) {
     }
     return null;
 }
+
+
+//para tablero jugador CU
+public void agregarCarrerasDisponiblesDto(List<CarreraDisponibleDto> lista) {
+    for (Carrera c : carreras) {
+        if (c.estaDisponibleParaApostar()) {
+            lista.add(new CarreraDisponibleDto(c, getFecha().toString()));
+        }
+    }
+}
+
+
 
 
 }

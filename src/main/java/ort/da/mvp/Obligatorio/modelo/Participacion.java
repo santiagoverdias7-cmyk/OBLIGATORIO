@@ -9,7 +9,7 @@ public class Participacion {
     private Caballo caballo;
     private Carrera carrera;
     private List<Apuesta> apuestas; //nose si dejarlo asi o poner como hizo el profe una apuesta sola.
-
+    private double dividendoFinal;
     
     public Participacion(int numero, Caballo caballo, Carrera carrera) {
     this.numero = numero;
@@ -29,19 +29,18 @@ public class Participacion {
     public Carrera getCarrera() { return carrera; }
     public List<Apuesta> getApuestas() { return apuestas; }
 
-public void agregarApuesta(Apuesta apuesta) {
-        apuestas.add(apuesta);
-    }
 
     public int getCantidadApuestas() {
         return apuestas.size();
     }
 
-   public double getTotalApostado() {
+  public double getTotalApostado() {
     double total = 0;
+
     for (Apuesta apuesta : apuestas) {
         total += apuesta.getMontoApostado();
     }
+
     return total;
 }
 
@@ -53,6 +52,16 @@ public double getTotalPagado() {
     return total;
 }
 
+public void agregarApuesta(Apuesta apuesta) {
+    apuestas.add(apuesta);
+    apuesta.getJugador().agregarApuesta(apuesta);
+}
 
+
+
+public void guardarDividendoFinal() {
+    this.dividendoFinal = dividendo.getValor();
+}
+public double getDividendoFinal() { return dividendoFinal; }
 
 }

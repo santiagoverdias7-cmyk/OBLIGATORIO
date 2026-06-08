@@ -18,6 +18,11 @@ import ort.da.mvp.Obligatorio.presentador.Commands;
 public class PresentadorLoginJugador {
 
   
+     private final Fachada fachada;
+
+    public PresentadorLoginJugador(Fachada fachada) {
+        this.fachada = fachada;
+    }
 
    
 
@@ -27,7 +32,7 @@ public class PresentadorLoginJugador {
             @RequestParam String nombreUsuario,
             @RequestParam String password) {
 
-        Usuario usuario = Fachada.getInstancia().loginJugador(nombreUsuario, password);
+        Usuario usuario = fachada.loginJugador(nombreUsuario, password);
 
         if (usuario != null) {
             sesionHttp.setAttribute("usuarioLogueado", usuario);

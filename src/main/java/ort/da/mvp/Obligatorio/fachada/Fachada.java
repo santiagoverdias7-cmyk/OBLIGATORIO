@@ -1,15 +1,18 @@
 package ort.da.mvp.Obligatorio.fachada;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import ort.da.mvp.Obligatorio.Sistemas.SistemaApuestas;
 import ort.da.mvp.Obligatorio.Sistemas.SistemaJornadas;
 import ort.da.mvp.Obligatorio.Sistemas.SistemaUsuarios;
+import ort.da.mvp.Obligatorio.dtos.CarreraDisponibleDto;
 import ort.da.mvp.Obligatorio.modelo.Apuesta;
 import ort.da.mvp.Obligatorio.modelo.Carrera;
 import ort.da.mvp.Obligatorio.modelo.Jornada;
+import ort.da.mvp.Obligatorio.modelo.ModalidadAP.ModalidadApuesta;
 import ort.da.mvp.Obligatorio.modelo.Usuario;
 import ort.da.mvp.Obligatorio.observador.Observable;
 
@@ -24,7 +27,7 @@ public class Fachada extends Observable  {
     }
 
 
-    private static Fachada instancia;
+   
 
     private SistemaUsuarios sistemaUsuarios;
     private SistemaJornadas sistemaJornadas;
@@ -36,13 +39,7 @@ public class Fachada extends Observable  {
         this.sistemaApuestas = new SistemaApuestas();
     }
 
-    public static Fachada getInstancia() {
-        if (instancia == null) {
-            instancia = new Fachada();
-        }
-        return instancia;
-    }
-
+    
 
  public void agregarUsuario(Usuario usuario) {
         sistemaUsuarios.agregarUsuario(usuario);
@@ -100,9 +97,19 @@ public void registrarApuesta(Apuesta apuesta) {
      avisar(Eventos.cambioApuestas);
 }
 
-/*public ModalidadApuesta buscarModalidad(String nombre) {
+public ModalidadApuesta buscarModalidad(String nombre) {
     return sistemaApuestas.buscarModalidad(nombre);
-}*/
+}
+
+//PARA CU DE JUGADOR.
+public List<CarreraDisponibleDto> getCarrerasDisponibles() {
+    return sistemaJornadas.getCarrerasDisponibles();
+}
+
+public List<ModalidadApuesta> getModalidades() {
+    return sistemaApuestas.getModalidades();
+}
+
 
 
 }

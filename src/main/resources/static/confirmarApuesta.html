@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Apuesta - MalaPata</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Confirmar Apuesta</h2>
+
+      <div id="mensajeBox" class="message-box"></div>
+
+      <div class="form-group">
+        <label>Número de Carrera</label>
+        <div id="numeroCarrera" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de Carrera</label>
+        <div id="nombreCarrera" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Número de Caballo</label>
+        <div id="numeroCaballo" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de Caballo</label>
+        <div id="nombreCaballo" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Dividendo Actual</label>
+        <div id="dividendoActual" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Estado del Dividendo</label>
+        <div id="estadoDividendo" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Monto Apostado</label>
+        <div id="montoApostado" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Apuesta</label>
+        <div id="tipoApuesta" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Costo</label>
+        <div id="montoCosto" class="value">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Monto a Cobrar</label>
+        <div id="montoCobraria" class="value">-</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <form id="confirmForm">
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+        </div>
+
+        <div class="button-group horizontal">
+          <button type="submit" id="btnConfirmar">Confirmar</button>
+          <button type="button" id="btnDescartar">Descartar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import dispatcher from '/CommandDispatcher.js';
+
+    const view = dispatcher.registerView('confirmarApuesta', {
+      onError: (status, texto) => mostrarMensaje(`Error ${status}: ${texto}`, 'error'),
+      onException: (msg) => mostrarMensaje(msg, 'error')
+    });
+
+    function mostrarError(mensaje) {
+      const box = document.getElementById('mensajeBox');
+      box.textContent = mensaje;
+      box.className = `message-box show error`;
+      setTimeout(() => box.classList.remove('show'), 5000);
+    }
+
+    function cargarDatosDesdeUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const datosParam = params.get('datos');
+      if (!datosParam) {
+        mostrarError('No se encontraron datos de apuesta.');
+        return;
+      }
+
+      let datos = null;
+      try {
+        datos = JSON.parse(decodeURIComponent(datosParam));
+      } catch (e) {
+        mostrarError('Los datos de apuesta no son válidos.');
+        return;
+      }
+
+      document.getElementById('numeroCarrera').textContent = datos.numeroCarrera ?? '-';
+      document.getElementById('nombreCarrera').textContent = datos.nombreCarrera || '-';
+      document.getElementById('numeroCaballo').textContent = datos.numeroCaballo ?? '-';
+      document.getElementById('nombreCaballo').textContent = datos.nombreCaballo || '-';
+      document.getElementById('dividendoActual').textContent = datos.dividendoValido ? datos.dividendoActual : 'S/E';
+      document.getElementById('estadoDividendo').textContent = datos.dividendoValido ? 'Válido' : 'No válido';
+      document.getElementById('montoApostado').textContent = datos.montoApostado ?? '-';
+      document.getElementById('tipoApuesta').textContent = datos.tipoApuesta || '-';
+      document.getElementById('montoCosto').textContent = datos.montoCosto ?? '-';
+      document.getElementById('montoCobraria').textContent = datos.montoCobraria ?? '-';
+    }
+
+    view.handler('apuestaConfirmada', (url) => {
+      window.location.href = `/${url}`;
+    });
+
+    view.handler('apuestaDescartada', (url) => {
+      window.location.href = `/${url}`;
+    });
+
+    view.handler('mensaje', (mensaje) => {
+      mostrarError(mensaje);
+    });
+
+    view.handler('loginExitoso', (url) => {
+      window.location.href = `/${url}`;
+    });
+
+    cargarDatosDesdeUrl();
+
+    function mostrarMensaje(texto, tipo) {
+      const box = document.getElementById('mensajeBox');
+      box.textContent = texto;
+      box.className = `message-box show ${tipo}`;
+      if (tipo === 'error') {
+        setTimeout(() => box.classList.remove('show'), 5000);
+      }
+    }
+
+    document.getElementById('confirmForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      dispatcher.submit('/confirmarApuesta/confirmar', { password });
+    });
+
+    document.getElementById('btnDescartar').addEventListener('click', () => {
+      dispatcher.submit('/confirmarApuesta/descartar');
+    });
+
+    dispatcher.startView(view);
+  </script>
+</body>
+</html>

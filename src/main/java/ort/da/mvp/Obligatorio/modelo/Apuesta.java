@@ -23,6 +23,14 @@ public class Apuesta {
     public Jugador getJugador() { return jugador; }
     public Participacion getParticipacion() { return participacion; }
 
+    public ModalidadApuesta getModalidad() { return modalidad; }
+
     public void setMontoCobrado(double montoCobrado) { this.montoCobrado = montoCobrado; }
+
+public Carrera getCarrera() {
+    return participacion.getCarrera();
+}
+
+
 }
 

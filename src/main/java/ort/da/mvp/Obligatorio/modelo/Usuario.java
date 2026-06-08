@@ -36,4 +36,8 @@ public String getNombreUsuario() {
         this.nombreCompleto = nombreCompleto;
     }
 
+public boolean coincideContrasenia(String pwd) {
+    return this.Password != null && this.Password.equals(pwd);
+}
+
 }

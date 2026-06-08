@@ -36,11 +36,12 @@ public Usuario loginJugador(String nombreUsuario, String password) {
 }
 private Usuario buscarUsuario(String nombreUsuario, String password) {
     for (Usuario u : usuarios) {
-        if (u.getNombreUsuario().equals(nombreUsuario) && u.getPassword().equals(password)) {
+        if (u.getNombreUsuario().equals(nombreUsuario) && u.coincideContrasenia(password)) {
             return u;
         }
     }
     return null;
 }
+
 
 }

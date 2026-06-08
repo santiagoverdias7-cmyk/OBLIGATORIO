@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tablero Jugador - MalaPata</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Encabezado -->
+    <div class="dashboard-header">
+      <div>
+        <h1>🐴 MalaPata</h1>
+        <p class="subtitle">Tablero del Jugador</p>
+      </div>
+      <button id="btnCerrarSesion" class="btn-logout">Cerrar Sesión</button>
+    </div>
+
+    <!-- Mensaje de error/éxito -->
+    <div id="messageBox" class="message-box"></div>
+
+    <!-- Información del jugador -->
+    <div class="profile-grid">
+      <div class="profile-card">
+        <div class="label">Jugador</div>
+        <div id="nombreJugador" class="value">-</div>
+      </div>
+      <div class="profile-card">
+        <div class="label">Saldo Disponible</div>
+        <div id="saldoJugador" class="value">$0.00</div>
+      </div>
+      <div class="profile-card">
+        <div class="label">Total Apostado</div>
+        <div id="totalApostado" class="value">$0.00</div>
+      </div>
+      <div class="profile-card">
+        <div class="label">Total Ganado</div>
+        <div id="totalGanado" class="value">$0.00</div>
+      </div>
+    </div>
+
+    <!-- Formulario para realizar apuesta -->
+    <div class="card apuesta-card">
+      <h2>Realizar Apuesta</h2>
+      <p class="description">Selecciona carrera, caballo, modalidad y monto para confirmar tu apuesta.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="selectCarrera">Carrera</label>
+          <select id="selectCarrera">
+            <option value="">Seleccione una carrera</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="selectCaballo">Caballo</label>
+          <select id="selectCaballo" disabled>
+            <option value="">Seleccione un caballo</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="selectModalidad">Modalidad</label>
+          <select id="selectModalidad">
+            <option value="">Seleccione una modalidad</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputMonto">Monto</label>
+          <input id="inputMonto" type="number" min="1" step="0.01" placeholder="Monto a apostar">
+        </div>
+      </div>
+
+      <div class="button-group" style="margin-top: 10px; justify-content: flex-end;">
+        <button id="btnApostar">Apostar</button>
+      </div>
+    </div>
+
+    <!-- Carreras disponibles -->
+    <div class="seccion-carreras">
+      <h2>Carreras Disponibles</h2>
+      <div id="carrerasContainer">
+        <p id="noCarreras" class="sin-datos">No hay carreras abiertas</p>
+        <table id="tablaCarreras" class="tabla-carreras" style="display:none;">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Número</th>
+              <th>Nombre</th>
+              <th>Caballo</th>
+              <th>Dividendo</th>
+            </tr>
+          </thead>
+          <tbody id="bodyCarreras"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Apuestas realizadas -->
+    <div class="seccion-carreras">
+      <h2>Mis Apuestas</h2>
+      <div id="apuestasContainer">
+        <p id="sinApuestas" class="sin-datos">No hay apuestas realizadas</p>
+        <table id="tablaApuestas" class="tabla-carreras" style="display:none;">
+          <thead>
+            <tr>
+              <th>Carrera</th>
+              <th>Caballo</th>
+              <th>Monto Apostado</th>
+              <th>Tipo</th>
+              <th>Monto Cobrado</th>
+              <th>Dividendo Final</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="bodyApuestas"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import dispatcher from '/CommandDispatcher.js';
+
+    const view = dispatcher.registerView('tableroJugador', {
+      urlInicio: '/tableroJugador/vistaConectada',
+      onError: (status, texto) => mostrarError(`Error ${status}: ${texto}`),
+      onException: (msg) => mostrarError(msg)
+    });
+
+    // Referencias a elementos del DOM
+    const selectCarrera = document.getElementById('selectCarrera');
+    const selectCaballo = document.getElementById('selectCaballo');
+    const selectModalidad = document.getElementById('selectModalidad');
+    const inputMonto = document.getElementById('inputMonto');
+    const bodyCarreras = document.getElementById('bodyCarreras');
+    const tablaCarreras = document.getElementById('tablaCarreras');
+    const noCarreras = document.getElementById('noCarreras');
+    const bodyApuestas = document.getElementById('bodyApuestas');
+    const tablaApuestas = document.getElementById('tablaApuestas');
+    const sinApuestas = document.getElementById('sinApuestas');
+    const btnApostar = document.getElementById('btnApostar');
+    const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+    let carrerasData = [];
+    let carreraSeleccionada = null;
+    let caballoSeleccionado = null;
+    let modalidadesData = [];
+    let modalidadSeleccionada = null;
+
+    // Función auxiliar para mostrar errores
+    function mostrarError(mensaje) {
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = mensaje;
+      messageBox.className = 'message-box show error';
+      setTimeout(() => messageBox.classList.remove('show'), 5000);
+    }
+
+    // Función para formatear moneda
+    function formatearMoneda(valor) {
+      return new Intl.NumberFormat('es-UY', {
+        style: 'currency',
+        currency: 'UYU'
+      }).format(valor || 0);
+    }
+
+    // Actualizar caballos según carrera seleccionada
+    function actualizarCarreraSeleccionada() {
+      const carreraId = parseInt(selectCarrera.value, 10);
+      carreraSeleccionada = carrerasData.find(c => c.numero === carreraId) || null;
+      caballoSeleccionado = null;
+
+      selectCaballo.innerHTML = '<option value="">Seleccione un caballo</option>';
+      selectCaballo.disabled = true;
+
+      if (carreraSeleccionada && Array.isArray(carreraSeleccionada.participaciones) && carreraSeleccionada.participaciones.length > 0) {
+        carreraSeleccionada.participaciones.forEach(p => {
+          const opcion = document.createElement('option');
+          opcion.value = String(p.numero);
+          opcion.textContent = `${p.numero} - ${p.nombreCaballo}`;
+          selectCaballo.appendChild(opcion);
+        });
+        selectCaballo.disabled = false;
+      }
+    }
+
+    function actualizarCaballoSeleccionado() {
+      if (!carreraSeleccionada) {
+        caballoSeleccionado = null;
+        return;
+      }
+      const caballoId = parseInt(selectCaballo.value, 10);
+      caballoSeleccionado = carreraSeleccionada.participaciones.find(p => p.numero === caballoId) || null;
+    }
+
+    function actualizarModalidadSeleccionada() {
+      const modalidadNombre = selectModalidad.value;
+      modalidadSeleccionada = modalidadesData.find(m => m.nombre === modalidadNombre) || null;
+    }
+
+    // Handler para el comando 'tablero'
+    view.handler('tablero', (parametro) => {
+      // Mostrar información del jugador
+      const jugador = parametro?.jugador || {};
+      document.getElementById('nombreJugador').textContent = jugador.nombreCompleto || '-';
+      document.getElementById('saldoJugador').textContent = formatearMoneda(jugador.saldo);
+      document.getElementById('totalApostado').textContent = formatearMoneda(jugador.totalApostado);
+      document.getElementById('totalGanado').textContent = formatearMoneda(jugador.totalGanado);
+
+      // Mostrar carreras disponibles
+      const carreras = parametro?.carrerasDisponibles || [];
+      carrerasData = carreras;
+      carreraSeleccionada = null;
+      caballoSeleccionado = null;
+      bodyCarreras.innerHTML = '';
+      selectCarrera.innerHTML = '<option value="">Seleccione una carrera</option>';
+
+      if (carreras.length === 0) {
+        tablaCarreras.style.display = 'none';
+        noCarreras.style.display = 'block';
+      } else {
+        noCarreras.style.display = 'none';
+        tablaCarreras.style.display = 'table';
+        carreras.forEach(carrera => {
+          // Crear una sola fila por carrera y listar los caballos en una celda
+          const caballosHtml = Array.isArray(carrera.participaciones) && carrera.participaciones.length > 0
+            ? carrera.participaciones.map(p => {
+                const dividendo = p.dividendoValido ? formatearMoneda(p.dividendo) : 'S/E';
+                return `${p.numero}-${p.nombreCaballo} (${dividendo})`;
+              }).join(', ')
+            : '';
+
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${carrera.fecha}</td>
+            <td>${carrera.numero}</td>
+            <td>${carrera.nombre}</td>
+            <td>${caballosHtml}</td>
+          `;
+          bodyCarreras.appendChild(fila);
+
+          const opcion = document.createElement('option');
+          opcion.value = String(carrera.numero);
+          opcion.dataset.fecha = carrera.fecha;
+          opcion.textContent = `${carrera.numero} - ${carrera.nombre}`;
+          selectCarrera.appendChild(opcion);
+        });
+      }
+
+      // Mostrar modalidades
+      const modalidades = parametro?.modalidades || [];
+      modalidadesData = modalidades;
+      modalidadSeleccionada = null;
+      selectModalidad.innerHTML = '<option value="">Seleccione una modalidad</option>';
+      modalidades.forEach(mod => {
+        const opcion = document.createElement('option');
+        opcion.value = mod.nombre;
+        opcion.textContent = mod.nombre;
+        selectModalidad.appendChild(opcion);
+      });
+
+      // Mostrar apuestas realizadas
+      const apuestas = parametro?.apuestas || [];
+      bodyApuestas.innerHTML = '';
+
+      if (apuestas.length === 0) {
+        tablaApuestas.style.display = 'none';
+        sinApuestas.style.display = 'block';
+      } else {
+        sinApuestas.style.display = 'none';
+        tablaApuestas.style.display = 'table';
+        apuestas.forEach(apuesta => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${apuesta.numeroCarrera} - ${apuesta.nombreCarrera}</td>
+            <td>${apuesta.numeroCaballo} - ${apuesta.nombreCaballo}</td>
+            <td>${formatearMoneda(apuesta.montoApostado)}</td>
+            <td>${apuesta.tipoApuesta}</td>
+            <td>${formatearMoneda(apuesta.montoCobrado)}</td>
+            <td>${formatearMoneda(apuesta.dividendoFinal)}</td>
+            <td>${apuesta.estado}</td>
+          `;
+          bodyApuestas.appendChild(fila);
+        });
+      }
+    });
+
+    // Handler para navegación exitosa
+    view.handler('loginExitoso', (url) => {
+      window.location.href = url;
+    });
+
+    // Handler para mensajes
+    view.handler('mensaje', (mensaje) => {
+      mostrarError(mensaje);
+    });
+
+    // Handler para confirmar apuesta
+    view.handler('confirmarApuesta', (parametro) => {
+      window.location.href = `/confirmarApuesta.html?datos=${encodeURIComponent(JSON.stringify(parametro))}`;
+    });
+
+    // Evento: cambiar carrera
+    selectCarrera.addEventListener('change', actualizarCarreraSeleccionada);
+    selectCaballo.addEventListener('change', actualizarCaballoSeleccionado);
+    selectModalidad.addEventListener('change', actualizarModalidadSeleccionada);
+
+    // Evento: botón Apostar
+    btnApostar.addEventListener('click', () => {
+      const montoIngresado = parseFloat(inputMonto.value);
+
+      if (!carreraSeleccionada) {
+        mostrarError('Seleccione una carrera antes de apostar.');
+        return;
+      }
+      if (!caballoSeleccionado) {
+        mostrarError('Seleccione un caballo antes de apostar.');
+        return;
+      }
+      if (!modalidadSeleccionada || !modalidadSeleccionada.nombre) {
+        mostrarError('Seleccione una modalidad antes de apostar.');
+        return;
+      }
+      if (isNaN(montoIngresado) || montoIngresado <= 0) {
+        mostrarError('Ingrese un monto válido mayor a 0.');
+        return;
+      }
+
+      dispatcher.submit('/confirmarApuesta/iniciar', {
+        numeroCarrera: parseInt(carreraSeleccionada.numero, 10),
+        fechaCarrera: carreraSeleccionada.fecha,
+        numeroCaballo: parseInt(caballoSeleccionado.numero, 10),
+        nombreModalidad: modalidadSeleccionada.nombre,
+        montoApostado: montoIngresado
+      });
+    });
+
+    // Evento: botón Cerrar Sesión
+    btnCerrarSesion.addEventListener('click', () => {
+      dispatcher.submit('/tableroJugador/cerrarSesion');
+    });
+
+    // Iniciar la vista
+    dispatcher.startView(view);
+    dispatcher.connectSSE('/tableroJugador/registrarSSE');
+  </script>
+</body>
+</html>

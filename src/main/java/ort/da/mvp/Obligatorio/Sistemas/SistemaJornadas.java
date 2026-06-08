@@ -3,8 +3,9 @@ package ort.da.mvp.Obligatorio.Sistemas;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import ort.da.mvp.Obligatorio.modelo.Carrera;
 
+import ort.da.mvp.Obligatorio.dtos.CarreraDisponibleDto;
+import ort.da.mvp.Obligatorio.modelo.Carrera;
 import ort.da.mvp.Obligatorio.modelo.Jornada;
 
 public class SistemaJornadas {
@@ -104,6 +105,14 @@ public void finalizarCarrera(Carrera carrera, int numeroGanador) {
    
 }
 
+
+public List<CarreraDisponibleDto> getCarrerasDisponibles() {
+    List<CarreraDisponibleDto> disponibles = new ArrayList<>();
+    for (Jornada j : jornadas) {
+        j.agregarCarrerasDisponiblesDto(disponibles);
+    }
+    return disponibles;
+}
 
 
 

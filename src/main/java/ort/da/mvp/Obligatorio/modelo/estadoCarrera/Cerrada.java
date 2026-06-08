@@ -6,6 +6,7 @@ public class Cerrada extends EstadoCarrera {
 
 @Override
 public void finalizar(Carrera carrera) {
+    carrera.liquidarApuestas();
     carrera.setEstado(new Finalizada());   
 }
 
